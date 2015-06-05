@@ -18,8 +18,8 @@ class NewVisitorTest(unittest.TestCase):
 		self.assertIn('WeatherPoint', self.browser.title)
 
 		# Check first slide image goes to model page
-		self.browser.find_element_by_id('firstimg').click()
-		self.assertIn('Models Page', self.browser.title)
+		self.browser.find_element_by_id('modelspg').click()
+		self.assertIn('Models', self.browser.title)
 
 		self.fail('Finish the test!')
 
