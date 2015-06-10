@@ -1,19 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
     	<title>WeatherPoint</title>
-    	
+    	{% load staticfiles %}
+    	<link href="{% static "bootstrap/css/bootstrap.min.css" %}" rel="stylesheet">
+    	<link href="{% static "base.css" %}" rel="stylesheet">	
  	</head>
- 	<body style="padding:0px; margin:0px; font-family:Arial, Verdana; background-color:#fff;">
+ 	<body>
+ 		<div class="navbar-wrapper">
+ 			<div class="container">
+ 				<nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0px;">
+ 				<div class="container">
+ 					<div class="navbar-header">
+ 						<a class="navbar-brand" href="/">WeatherPoint</a>	
+ 					</div>
+ 					<div id="navbar" class="navbar-collapse collapse">
+ 						<ul class="nav navbar-nav">
+ 							<li><a href="{% url 'models' %}">models</a></li>
+ 							<li><a href="satellite">satellite</a></li>
+ 						</ul>
+ 					<div>
+ 				</div>
+ 			</nav>
+ 			</div>
+ 		</div>
+ 		<div id="slider1_container" style="position: relative; top: 0px; left: 0px;
+ 			width: 968px; height: 304px;">
+ 				<div u="slides" style="cursor: move; position: absolute; left: 0px; top: 0px; width: 968px; height: 304px; overflow: hidden;">
+ 					<div><a href="models"><img id="modelspg" u="image" src="{% static "images/radar.png" %}" /></a></div>
+ 					<div><img u="image" src="{% static "images/stormradar.png" %}" /></div>
+ 				</div>
+ 		</div>
+ 		</div>
  		<script src="http://code.jquery.com/jquery.min.js"></script>
-    	<script type="text/javascript" src="../static/jssor.js"></script>
- 		<script type="text/javascript" src="../static/jssor.slider.js"></script>
+    	<script type="text/javascript" src="{% static "js/jssor.js" %}"></script>
+ 		<script type="text/javascript" src="{% static "js/jssor.slider.js" %}"></script>
  		<script>
  			jQuery(document).ready(function ($) {
  				var options = {
  					$FillMode: 2,
  					$AutoPlay: true,
- 					$AutoPlayInterval: 5000,
+ 					$AutoPlayInterval: 4000,
  					$DragOrientation: 1
  					//$PauseOnHover: 1,
  					//$SlideEasing: $JssorEasing$.$EaseOutQuint,
@@ -46,12 +76,5 @@
 				
  			});
  		</script>
- 		<div id="slider1_container" style="position: relative; top: 0px; left: 0px;
- 			width: 1162px; height: 631px;">
- 				<div u="slides" style="cursor: move; position: absolute; left: 0px; top: 0px; width: 1162px; height: 631px; overflow: hidden;">
- 					<div><a href="models"><img id="modelspg" u="image" src="../static/images/radar.png" /></a></div>
- 					<div><img u="image" src="../static/images/stormradar.png" /></div>
- 				</div>
- 		</div>
  	</body>
 </html>

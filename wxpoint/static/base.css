@@ -1,4 +1,44 @@
-#slider1_container img {
-    max-width:100%;
-    max-height:100%;
+a  {
+	color: white;
+	font-family: arial;
 }
+
+
+.navbar-wrapper {
+	position: absolute;
+	top: 15px;
+	left: 0px;
+	width: 100%;
+	height: 25px;
+	
+
+}
+.navbar-wrapper > .container {
+	padding: 0;
+	
+}
+@media all and (max-width: 768px ){
+	.navbar-wrapper{
+		position: relative;
+		top: 0px;
+		
+	}
+}
+
+.navbar .nav {
+	float: right;
+	margin-right: 0;
+
+}
+
+.navbar .nav li a {
+	text-transform: uppercase;
+	font-weight: 700;
+	font-size: 13px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	
+
+}
+
+

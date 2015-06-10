@@ -1,9 +1,9 @@
 from selenium import webdriver
-from django.test import LiveServerTestCase
-from selenium.webdriver.common.keys import Keys
-import unittest
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+#from selenium.webdriver.common.keys import Keys
+#import unittest
 
-class NewVisitorTest(LiveServerTestCase):
+class NewVisitorTest(StaticLiveServerTestCase):
 
 	def setUp(self):
 		self.browser = webdriver.Chrome()
@@ -22,10 +22,5 @@ class NewVisitorTest(LiveServerTestCase):
 		# Check first slide image goes to model page
 		self.browser.find_element_by_id('modelspg').click()
 		self.assertIn('Models', self.browser.title)
-
-		self.fail('Finish the test!')
-
-if __name__ == '__main__':
-	unittest.main(warnings='ignore')
 
 
