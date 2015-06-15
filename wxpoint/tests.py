@@ -26,15 +26,15 @@ class HomePageTest(TestCase):
 		self.assertEqual(response.content.decode(), expected_html)
 
 class NumModelTest(TestCase):
-
+    #Refactor this test
     def test_saving_and_retrieving_items(self):
     	# Test first table stores model names
         first_model = NModels()
-        first_model.model_name = 'GFS'
+        first_model.name = 'GFS'
         first_model.save()
 
         second_model = NModels()
-        second_model.model_name = 'CMC'
+        second_model.name = 'CMC'
         second_model.save()
 
         saved_models = NModels.objects.all()

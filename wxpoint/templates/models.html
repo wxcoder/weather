@@ -35,13 +35,14 @@
  				</div>
  		</div>
  		<div class="btn-group btn-group-justified" role="group" aria-label="...">
- 			<form action="#" method="GET" class="navbar-form navbar-left" role="form">
+ 			<form action="/" method="POST" class="navbar-form navbar-left">
  				<div class="btn-group" role="group">
- 					<button type="button" class="btn btn-default" value="click" name="mybtn">GFS</button>
+ 					<input name="GFS" type="submit" value="GFS" />
  				</div>
+ 				{% csrf_token %}
  			</form>	
  		</div>
- 			<iframe src="{% url 'new_model_image' }" ></iframe>
+ 			<img src={{ new_model_image }} />
  		<script src="http://code.jquery.com/jquery.min.js"></script>
     	<script type="text/javascript" src="{% static "js/jssor.js" %}"></script>
  		<script type="text/javascript" src="{% static "js/jssor.slider.js" %}"></script>
