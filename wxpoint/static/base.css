@@ -17,12 +17,16 @@ a  {
 	padding: 0;
 	
 }
-@media all and (max-width: 768px ){
+@media all and (max-width: 480px ){
 	.navbar-wrapper{
 		position: relative;
 		top: 0px;
 		
 	}
+	.half {
+        float: left !important;
+        width: 50% !important;
+    }
 }
 
 .navbar .nav {
@@ -41,7 +45,27 @@ a  {
 
 }
 
-.btn-group input {
-    margin: 10px;
+.btn-toolbar {
+    
+    margin-top: 10px ;
 }
+
+.btn-default, .btn-default:link, .btn-default:visited {
+    background-color: transparent;
+    border-radius: 24px;
+    color: black;
+    border: 1px solid #000000;
+}
+
+.btn-default:active, .btn-default:hover, .btn-default:focus, .open > .dropdown-toggle.btn-default {
+	background-color: white;
+	border-color: black;
+	color: black;
+
+}
+.row-bottom-margin {
+
+	margin: 0px;
+}
+
 
