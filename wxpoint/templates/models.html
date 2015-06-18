@@ -27,32 +27,49 @@
  				</nav>
  			</div>
  		</div>
- 		<div id="slider1_container" style="position: relative; top: 0px; left: 0px;
- 			width: 968px; height: 304px;">
- 				<div u="slides" style="cursor: move; position: absolute; left: 0px; top: 0px; width: 968px; height: 304px; overflow: hidden;">
+ 		<div class="row row-bottom-margin" id="slider1_container" style="position: relative; top: 0px; left: 0px;
+ 			width: 968px; height: 250px; ">
+ 				<div u="slides" style="cursor: move; position: absolute; left: 0px; top: 0px; width: 968px; height: 250px; overflow: hidden;">
  					<div><a href="models"><img id="modelspg" u="image" src="{% static "images/radar.png" %}" /></a></div>
  					<div><img u="image" src="{% static "images/stormradar.png" %}" /></div>
  				</div>
  		</div>
- 		<div class="btn-group btn-group-justified" role="group" aria-label="...">
- 			<form action="#" method="POST" class="navbar-form navbar-left">
- 				<div class="btn-group" role="group">
- 					<input name="GFS" type="submit" value="GFS" />
- 				</div>
- 				{% csrf_token %}
- 			</form>	
- 		</div>
- 			<img src='{{ new_model_image }}' />
+        <form action="/create_post/" method="POST" id="post-form">
+            <div class="col-sm-4" id="toprow">
+                <h4 style="font-family:verdana"> Global Models </h4>
+ 			    <img src='{% static 'images/USAcomplete2.png' %}' class="img-responsive thumbnail" id='gbimg' >
+                <div class="btn-toolbar">
+                    <button type="submit" name="model" value="GFS" class="btn btn-default" aria-haspopup="true">GFS</button>
+                    <button type="submit" name="model" value="CMC" class="btn btn-default">CMC</button>
+                    <button onclick="del()" type="submit" name="model" value="ECMWF" class="btn btn-default">ECMWF</button>
+                </div>
+
+            </div>
+            <div class ="col-sm-4">
+                <h4 style="font-family:verdana"> Mesoscale Models </h4>
+                <img src='{% static 'images/USAcomplete2.png' %}' class="img-responsive thumbnail" id='rgimg' >
+                <div class="btn-toolbar">
+                    <button onclick="del()" type="submit" name="model" value="RGEM" class="btn btn-default">RGEM </span></button>
+                    <button onclick="del()" type="submit" name="model" value="NAM" class="btn btn-default">NAM </span></button>
+                </div>
+            </div>
+            {% csrf_token %}
+        </form>
+        <div class="modelimages"></div>
  		<script src="http://code.jquery.com/jquery.min.js"></script>
     	<script type="text/javascript" src="{% static "js/jssor.js" %}"></script>
  		<script type="text/javascript" src="{% static "js/jssor.slider.js" %}"></script>
+        <script src="{% static "bootstrap/js/bootstrap.js" %}"></script>
+        <script src="{% static "bower_components/knockout/dist/knockout.js" %}"></script>
+        <script src="{% static "main.js" %}"></script>
  		<script>
  			jQuery(document).ready(function ($) {
  				var options = {
  					$FillMode: 2,
  					$AutoPlay: true,
- 					$AutoPlayInterval: 4000,
- 					$DragOrientation: 1
+ 					//$AutoPlayInterval: 4000,
+ 					//$DragOrientation: 1,
+                    $SlideshowOptions:  { $Class: $JssorSlideshowRunner$, $Transitions: [{ $Duration:700, $Fade: true, $Opacity:2 }] }
  					//$PauseOnHover: 1,
  					//$SlideEasing: $JssorEasing$.$EaseOutQuint,
  					//$SlideDuration: 800,
@@ -81,8 +98,15 @@
  				$(window).bind("load", ScaleSlider);
  				$(window).bind("resize", ScaleSlider);
  				$(window).bind("orientationchange", ScaleSlider);
+
+                
+
 				
  			});
+            //function del() {
+            //   document.getElementById('gbimg').style.display = 'none';
+            //    document.getElementById('rgimg').style.display = 'none';
+            //};
  		</script>
  	</body>
 </html>
