@@ -1,19 +1,25 @@
 $(document).ready(function () {
+    $(':button').click(function (){
+        var myval = $(this).attr("value");
+
+
     $('#post-form').on('submit', function(event) {
         event.preventDefault();
         console.log("form submitted!");
-        create_post();
-    });
-
-
-
-    function create_post() {
-        console.log("create post is working!");
+        console.log(myval);
         var cbtn = $("button");
         var btnval = cbtn.val();
-        console.log(btnval);
+        console.log(cbtn);
         document.getElementById('gbimg').style.display = 'none';
         document.getElementById('rgimg').style.display = 'none';
+        create_post(myval);
+        
+    });
+});
+
+
+    function create_post(btnval) {
+        console.log("create post is working!");
         $.ajax({
            url : "create_post/",
             cache : 'false',
@@ -22,11 +28,15 @@ $(document).ready(function () {
 
             success : function(json) {
                 console.log(json.result);
-                $(".modelimages").prepend("<img src="+json.result+" >");
+                var check=document.getElementById('modelerror');
+                if(check) {
+                    check.parentNode.removeChild(check);
+                }
+                $("#modelimages").prepend("<img src="+json.result+" class='img-responsive thumbnail'>");
             },
 
             error : function(xhr,errmsg,err) {
-                $('.modelimages').prepend("<p>Image Does Not Exist<p>")
+                $('#modelimages').prepend("<p id='modelerror'>Image Does Not Exist<p>")
             }
 
 
