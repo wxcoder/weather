@@ -39,23 +39,23 @@
                 <h4 style="font-family:verdana"> Global Models </h4>
  			    <img src='{% static 'images/USAcomplete2.png' %}' class="img-responsive thumbnail" id='gbimg' >
                 <div class="btn-toolbar">
-                    <button type="submit" name="model" value="GFS" class="btn btn-default" aria-haspopup="true">GFS</button>
+                    <button type="submit" name="model" value="GFS" class="btn btn-default">GFS</button>
                     <button type="submit" name="model" value="CMC" class="btn btn-default">CMC</button>
-                    <button onclick="del()" type="submit" name="model" value="ECMWF" class="btn btn-default">ECMWF</button>
+                    <button type="submit" name="model" value="ECMWF" class="btn btn-default">ECMWF</button>
                 </div>
 
             </div>
-            <div class ="col-sm-4">
+            <div class="col-sm-4">
                 <h4 style="font-family:verdana"> Mesoscale Models </h4>
                 <img src='{% static 'images/USAcomplete2.png' %}' class="img-responsive thumbnail" id='rgimg' >
                 <div class="btn-toolbar">
-                    <button onclick="del()" type="submit" name="model" value="RGEM" class="btn btn-default">RGEM </span></button>
-                    <button onclick="del()" type="submit" name="model" value="NAM" class="btn btn-default">NAM </span></button>
+                    <button type="submit" name="model" value="RGEM" class="btn btn-default">RGEM </span></button>
+                    <button type="submit" name="model" value="NAM" class="btn btn-default">NAM </span></button>
                 </div>
             </div>
             {% csrf_token %}
         </form>
-        <div class="modelimages"></div>
+        <div class="col-md-8" id="modelimages"></div>
  		<script src="http://code.jquery.com/jquery.min.js"></script>
     	<script type="text/javascript" src="{% static "js/jssor.js" %}"></script>
  		<script type="text/javascript" src="{% static "js/jssor.slider.js" %}"></script>
@@ -103,10 +103,7 @@
 
 				
  			});
-            //function del() {
-            //   document.getElementById('gbimg').style.display = 'none';
-            //    document.getElementById('rgimg').style.display = 'none';
-            //};
+
  		</script>
  	</body>
 </html>

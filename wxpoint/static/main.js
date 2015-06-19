@@ -1,25 +1,21 @@
 $(document).ready(function () {
-    $(':button').click(function (){
-        var myval = $(this).attr("value");
-
 
     $('#post-form').on('submit', function(event) {
-        event.preventDefault();
-        console.log("form submitted!");
-        console.log(myval);
-        var cbtn = $("button");
-        var btnval = cbtn.val();
-        console.log(cbtn);
-        document.getElementById('gbimg').style.display = 'none';
-        document.getElementById('rgimg').style.display = 'none';
-        create_post(myval);
+            event.preventDefault();
+            var val = $("button[type=submit][clicked=true]").val();
+            document.getElementById('gbimg').style.display = 'none';
+            document.getElementById('rgimg').style.display = 'none';
+            create_post(val);
         
     });
-});
+
+    $("#post-form button[type=submit]").click(function() {
+        $("button[type=submit]", $(this).parents("#post-form")).removeAttr("clicked");
+        $(this).attr("clicked", "true");
+    });
 
 
     function create_post(btnval) {
-        console.log("create post is working!");
         $.ajax({
            url : "create_post/",
             cache : 'false',
@@ -27,22 +23,24 @@ $(document).ready(function () {
             data : { initmdls : btnval},
 
             success : function(json) {
-                console.log(json.result);
-                var check=document.getElementById('modelerror');
-                if(check) {
-                    check.parentNode.removeChild(check);
+                var mcheck=document.getElementById('mimage');
+                if(!mcheck) {
+                    $("#modelimages").prepend("<img src="+json.result+" class='img-responsive thumbnail' id='mimage'>");
+                } else {
+                    mcheck.src=json.result;
                 }
-                $("#modelimages").prepend("<img src="+json.result+" class='img-responsive thumbnail'>");
             },
 
             error : function(xhr,errmsg,err) {
-                $('#modelimages').prepend("<p id='modelerror'>Image Does Not Exist<p>")
+                var mcheck=document.getElementById('mimage');
+                if(mcheck) {
+                    mcheck.parentNode.removeChild(mcheck);
+                }
             }
 
 
         });    
     };
-});
 
 
 // This function gets cookie with a given name
@@ -94,4 +92,5 @@ $.ajaxSetup({
             xhr.setRequestHeader("X-CSRFToken", csrftoken);
         }
     }
+});
 });
