@@ -15,7 +15,13 @@ def model_page(request):
         cmrun = initmodelrun[0].run_name
         initimage = ModelImages.objects.filter(model_region__region='USA').filter(model_region__model_run__run_name=cmrun).filter(
             map_type="temps", timestep='00hr')
+        #print(initimage[10].map_path.url)
         initimage = initimage[10].map_path
+        allimages =  ModelImages.objects.filter(model_region__region='USA').filter(model_region__model_run__run_name=cmrun).filter(
+            map_type="temps")
+        aimages = [x.map_path for x in allimages]
+        timages = [x.timestep for x in allimages]
+        #print(allimages)
         print(initimage)
         """
         new_model_image = request.POST['model']
@@ -28,10 +34,9 @@ def model_page(request):
         #test return
         response_data = {}
         response_data['result'] = initimage
+        response_data['images'] = [timages, aimages]
+        print(response_data['images'])
         return HttpResponse(json.dumps(response_data),content_type="application/json")
-        #return HttpResponse(request, 'models.html', {'new_model_image': myimage.map_path,
-        #                'modeltime':myimage.timestep })
-        
     else:
         cmrun = ModelRun.objects.all()
         cmrun = cmrun[len(cmrun)-1].run_name
@@ -40,3 +45,6 @@ def model_page(request):
         starting_image = final[0].map_path
         #print(starting_image)
         return render(request, 'models.html', {'new_model_image': starting_image })
+
+def model_page_buttons(request):
+    pass

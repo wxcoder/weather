@@ -48,6 +48,7 @@ a  {
 .btn-toolbar {
     
     margin-top: 10px ;
+    margin-bottom: 10px;
 }
 
 .btn-default, .btn-default:link, .btn-default:visited {
@@ -63,6 +64,7 @@ a  {
 	color: black;
 
 }
+
 .row-bottom-margin {
 
 	margin: 0px;

@@ -56,6 +56,17 @@
             {% csrf_token %}
         </form>
         <div class="col-md-8" id="modelimages"></div>
+        <div class="col-md-4" id="modelbuttons">
+        <!--    <form action="/load_images/" method="POST" id="mbutton-form">
+                {% csrf_token %}
+            </form> -->
+        </div>
+        <div class="btn-toolbar" data-bind="foreach: globalmodels">
+            <button name="models" id='model' data-bind="attr: { value: modelname},text: modelname, click: $parent.getModel" class="btn btn-default"> </button>
+        </div>
+        <ul data-bind="foreach: chosenModelData">
+            <button data-bind='text: $data[1]'></button>
+        </ul>
  		<script src="http://code.jquery.com/jquery.min.js"></script>
     	<script type="text/javascript" src="{% static "js/jssor.js" %}"></script>
  		<script type="text/javascript" src="{% static "js/jssor.slider.js" %}"></script>
@@ -99,10 +110,137 @@
  				$(window).bind("resize", ScaleSlider);
  				$(window).bind("orientationchange", ScaleSlider);
 
-                
+
 
 				
  			});
+
+            $(document).ready(function () {
+                function AppViewModel() {
+                    var self = this;
+
+                    self.globalmodels = ko.observableArray([
+                        { modelname: "GFS"},
+                        { modelname: "ECMWF"},
+                        { modelname: "CMC"}
+                    ]);
+                    
+
+                    self.chosenModel = ko.observable();
+                    self.chosenModelData = ko.observableArray();
+
+                    //$('button[name=models]').click(function (){
+                    self.getModel = function(models) {
+                    //var myval = $(this).attr("value");
+                    console.log(models.modelname);
+                    document.getElementById('gbimg').style.display = 'none';
+                    document.getElementById('rgimg').style.display = 'none';
+                    self.create_post(models.modelname);
+                    var check = document.getElementsByName("models");
+                    for(var z = 0; z < check.length; z++){
+                        if(check[z].disabled) {
+                            check[z].disabled=false;
+                        }
+                    }
+                    $('button[value='+models.modelname+']').attr("disabled","true");
+
+
+                    }
+
+
+                    self.create_post =function(btnval) {
+                        $.ajax({
+                        url : "create_post/",
+                        cache : 'false',
+                        type : "POST",
+                        data : { initmdls : btnval},
+
+                        success : function(json) {
+                            var mcheck=document.getElementById('mimage');
+                            if(!mcheck) {
+                                $("#modelimages").prepend("<img src="+json.result+" class='img-responsive thumbnail' id='mimage'>");
+                            } else {
+                                mcheck.src=json.result;
+                            }
+                            self.chosenModelData.removeAll();
+                            var timestep = json.images[0];
+                            var imgpath = json.images[1];
+                            for(var i = 0; i < json.images[0].length; i++) {
+                                self.chosenModelData.push([timestep[i], imgpath[i]])
+                            }
+                            //console.log(json.images[1].length);
+                            //self.chosenModelData.push(json.images);
+                            console.log(self.chosenModelData());
+
+
+                        },
+
+                        error : function(xhr,errmsg,err) {
+                            var mcheck=document.getElementById('mimage');
+                            if(mcheck) {
+                                mcheck.parentNode.removeChild(mcheck);
+                            }
+                        }
+
+
+                        });
+                        var checkbuttons = document.getElementById('allbuttons');
+                        //console.log(checkbuttons);
+                        if(checkbuttons) {
+                            checkbuttons.parentNode.removeChild(checkbuttons);
+                            self.create_buttons(btnval);
+                        } else {
+                            self.create_buttons(btnval);
+                        }
+                    }
+
+                    self.create_buttons= function(btnval) {
+                        var modeldiv = document.getElementById('allbuttons');
+                        var num_buttons = {'GFS':[384,6,14,0], 'ECMWF':[240,24,3,2],'CMC':[240,6,11,0],'NAM':[84,3,8,0],'RGEM':[48,3,5,0]};
+                        var tbl=document.createElement('table');
+                        tbl.style.width='20%';
+                        tbl.style.height = "30%"
+                        tbl.id="allbuttons";
+                        var tbdy=document.createElement('tbody');
+                        //if(btnval == 'GFS') {
+                        var buttonval = [];
+                        for(var a=0; a <= num_buttons[btnval][0]; a+=num_buttons[btnval][1] ) {
+                            if(a <= 240) {
+                                buttonval.push(a.toString());
+                            } else {
+                                a +=6;
+                                buttonval.push(a.toString());
+                            }
+                        }
+                        for(var i = 0; i < num_buttons[btnval][2]; i++) {
+                            var tr= tbl.insertRow();
+                            for(var j = 0; j < 4; j++ ) {
+                                if( i == (num_buttons[btnval][2] - 1) && j > num_buttons[btnval][3]) {
+                                    break;
+                                
+                            } else {
+                                var td = tr.insertCell();
+                                var btn = document.createElement("button");
+                                btn.className= "btn btn-default";
+                                btn.name = btnval;
+                                btn.value=(buttonval[0])
+                                var t = document.createTextNode(buttonval[0]);
+                                buttonval.shift();
+                                btn.appendChild(t);
+                                td.appendChild(btn);
+
+                                }
+                            }
+                        }   
+                        $('#modelbuttons').prepend(tbl);
+                    };
+                                }
+                ko.applyBindings(new AppViewModel());
+            });
+
+            
+
+        
 
  		</script>
  	</body>
