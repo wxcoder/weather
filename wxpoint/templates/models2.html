@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+    	<title>Models</title>
+    	{% load staticfiles %}
+    	<link href="{% static "bootstrap/css/bootstrap.min.css" %}" rel="stylesheet">
+    	<link href="{% static "base.css" %}" rel="stylesheet">	
+ 	</head>
+ 	<body>
+ 		<div class="navbar-wrapper">
+ 			<div class="container">
+ 				<nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0px;">
+ 				<div class="container">
+ 					<div class="navbar-header">
+ 						<a class="navbar-brand" href="/">WeatherPoint</a>	
+ 					</div>
+ 					<div id="navbar" class="navbar-collapse collapse">
+ 						<ul class="nav navbar-nav">
+ 							<li><a href="{% url 'models' %}">models</a></li>
+ 							<li><a href="satellite">satellite</a></li>
+ 						</ul>
+ 					</div>
+ 				</div>
+ 				</nav>
+ 			</div>
+ 		</div>
+ 		<div class="row row-bottom-margin" id="slider1_container" style="position: relative; top: 0px; left: 0px;
+ 			width: 968px; height: 250px; ">
+ 				<div u="slides" style="cursor: move; position: absolute; left: 0px; top: 0px; width: 968px; height: 250px; overflow: hidden;">
+ 					<div><a href="models"><img id="modelspg" u="image" src="{% static "images/radar.png" %}" /></a></div>
+ 					<div><img u="image" src="{% static "images/stormradar.png" %}" /></div>
+ 				</div>
+ 		</div>
+        <form action="/create_post/" method="POST" id="post-form">
+            <div class="col-sm-4" id="toprow">
+                <h4 style="font-family:verdana"> Global Models </h4>
+ 			    <img src='{% static 'images/USAcomplete2.png' %}' class="img-responsive thumbnail" id='gbimg' >
+                <div class="btn-toolbar">
+                    <button type="submit" name="model" value="GFS" class="btn btn-default">GFS</button>
+                    <button type="submit" name="model" value="CMC" class="btn btn-default">CMC</button>
+                    <button type="submit" name="model" value="ECMWF" class="btn btn-default">ECMWF</button>
+                </div>
+
+            </div>
+            <div class="col-sm-4">
+                <h4 style="font-family:verdana"> Mesoscale Models </h4>
+                <img src='{% static 'images/USAcomplete2.png' %}' class="img-responsive thumbnail" id='rgimg' >
+                <div class="btn-toolbar">
+                    <button type="submit" name="model" value="RGEM" class="btn btn-default">RGEM </span></button>
+                    <button type="submit" name="model" value="NAM" class="btn btn-default">NAM </span></button>
+                </div>
+            </div>
+            {% csrf_token %}
+        </form>
+        <div class="col-md-8" id="modelimages"></div>
+        <div class="col-md-4" id="modelbuttons">
+            <form action="/load_images/" method="POST" id="mbutton-form">
+                {% csrf_token %}
+            </form>
+        </div>
+        <div class="btn-toolbar" data-bind="foreach: modeltype">
+            <button name="model" data-bind="attr: { value: modelname},text: modelname" class="btn btn-default"> </button>
+        </div>
+ 		<script src="http://code.jquery.com/jquery.min.js"></script>
+    	<script type="text/javascript" src="{% static "js/jssor.js" %}"></script>
+ 		<script type="text/javascript" src="{% static "js/jssor.slider.js" %}"></script>
+        <script src="{% static "bootstrap/js/bootstrap.js" %}"></script>
+        <script src="{% static "bower_components/knockout/dist/knockout.js" %}"></script>
+        <script src="{% static "main.js" %}"></script>
+ 		<script>
+ 			jQuery(document).ready(function ($) {
+ 				var options = {
+ 					$FillMode: 2,
+ 					$AutoPlay: true,
+ 					//$AutoPlayInterval: 4000,
+ 					//$DragOrientation: 1,
+                    $SlideshowOptions:  { $Class: $JssorSlideshowRunner$, $Transitions: [{ $Duration:700, $Fade: true, $Opacity:2 }] }
+ 					//$PauseOnHover: 1,
+ 					//$SlideEasing: $JssorEasing$.$EaseOutQuint,
+ 					//$SlideDuration: 800,
+ 					//$SlideWidth: 980,
+ 					//$SlideHeight: 380,
+ 					//$SlideSpacing: 0,
+ 					//$DisplayPieces: 1,
+ 					//$ParkingPosition: 0,
+ 					//$UISearchMode: 1,
+ 					//$PlayOrientation: 1,
+
+ 				};
+ 				$("#slider1_container").css("display", "block");
+ 				var jssor_slider1 = new $JssorSlider$("slider1_container", options);
+ 				
+ 				function ScaleSlider() {
+ 					var parentWidth = $('#slider1_container').parent().width();
+ 					if (parentWidth) {
+ 						jssor_slider1.$ScaleWidth(parentWidth);
+ 					}
+ 					else
+ 						window.setTimeout(ScaleSlider, 30);
+ 				}
+
+ 				ScaleSlider();
+ 				$(window).bind("load", ScaleSlider);
+ 				$(window).bind("resize", ScaleSlider);
+ 				$(window).bind("orientationchange", ScaleSlider);
+
+
+
+				
+ 			});
+
+            function AppViewModel() {
+                    var self = this;
+
+                    self.modeltype = ko.observableArray([
+                        { modelname: "GFS"},
+                        { modelname: "ECMWF"},
+                        { modelname: "CMC"}
+                    ]);
+            }
+
+            ko.applyBindings(new AppViewModel());
+
+        
+
+ 		</script>
+ 	</body>
+</html>

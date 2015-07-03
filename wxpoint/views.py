@@ -12,15 +12,26 @@ def model_page(request):
         post_data = request.POST.get('initmdls')
         print(post_data)
         initmodelrun = ModelRun.objects.filter(currmodel__mname=post_data)
+        print(initmodelrun)
         cmrun = initmodelrun[0].run_name
+        print(cmrun)
+        """
         initimage = ModelImages.objects.filter(model_region__region='USA').filter(model_region__model_run__run_name=cmrun).filter(
             map_type="temps", timestep='00hr')
+        """
+        znitimage = ModelImages.objects.filter(model_region__model_run__currmodel__mname=post_data,
+            model_region__model_run__run_name=cmrun,
+            model_region__region='USA',
+            map_type="temps", timestep='00hr')
+        print(znitimage)
         #print(initimage[10].map_path.url)
-        initimage = initimage[10].map_path
+        initimage = znitimage[0].map_path
+        """
         allimages =  ModelImages.objects.filter(model_region__region='USA').filter(model_region__model_run__run_name=cmrun).filter(
             map_type="temps")
-        aimages = [x.map_path for x in allimages]
-        timages = [x.timestep for x in allimages]
+        """
+        aimages = [x.map_path for x in znitimage]
+        timages = [x.timestep for x in znitimage]
         #print(allimages)
         print(initimage)
         """
@@ -34,8 +45,8 @@ def model_page(request):
         #test return
         response_data = {}
         response_data['result'] = initimage
-        response_data['images'] = [timages, aimages]
-        print(response_data['images'])
+        response_data['images'] = [timages , aimages]
+        #print(response_data['images'])
         return HttpResponse(json.dumps(response_data),content_type="application/json")
     else:
         cmrun = ModelRun.objects.all()

@@ -55,18 +55,32 @@
             </div>
             {% csrf_token %}
         </form>
-        <div class="col-md-8" id="modelimages"></div>
-        <div class="col-md-4" id="modelbuttons">
+        <div class="container-fixed" id="grid-container">
+        <div class="col-xs-8" id="modelimages"></div>
+        <div class="col-xs-3" id="modelbuttons">
         <!--    <form action="/load_images/" method="POST" id="mbutton-form">
                 {% csrf_token %}
             </form> -->
+            <ul data-bind="foreach: chosenModelData" id="timesteps">
+                <button class="btn btn-default" data-bind="attr: {disabled: $data[2]}, text: $data[0], click: $parent.load_image"></button>
+            </ul>
+        </div>
         </div>
         <div class="btn-toolbar" data-bind="foreach: globalmodels">
             <button name="models" id='model' data-bind="attr: { value: modelname},text: modelname, click: $parent.getModel" class="btn btn-default"> </button>
         </div>
-        <ul data-bind="foreach: chosenModelData">
-            <button data-bind='text: $data[1]'></button>
-        </ul>
+        <!--
+        <div class="container-fixed">
+        <div class="row">
+                <div class="col-xs-5">
+                    <ul data-bind="foreach: chosenModelData">
+                        <button class="btn btn-default" data-bind="attr: {value: $data[1]}, text: $data[0], click: $parent.load_image"></button>
+                    </ul>
+                </div>
+                <div class="col-xs-7">
+                </div>
+            </div>
+        </div> -->
  		<script src="http://code.jquery.com/jquery.min.js"></script>
     	<script type="text/javascript" src="{% static "js/jssor.js" %}"></script>
  		<script type="text/javascript" src="{% static "js/jssor.slider.js" %}"></script>
@@ -132,23 +146,25 @@
                     //$('button[name=models]').click(function (){
                     self.getModel = function(models) {
                     //var myval = $(this).attr("value");
-                    console.log(models.modelname);
+                    //console.log(models.modelname);
                     document.getElementById('gbimg').style.display = 'none';
                     document.getElementById('rgimg').style.display = 'none';
-                    self.create_post(models.modelname);
+                    self.create_post(models.modelname, true);
                     var check = document.getElementsByName("models");
                     for(var z = 0; z < check.length; z++){
                         if(check[z].disabled) {
                             check[z].disabled=false;
+                            
                         }
                     }
                     $('button[value='+models.modelname+']').attr("disabled","true");
+                    
 
 
                     }
 
 
-                    self.create_post =function(btnval) {
+                    self.create_post =function(btnval, tst) {
                         $.ajax({
                         url : "create_post/",
                         cache : 'false',
@@ -159,19 +175,44 @@
                             var mcheck=document.getElementById('mimage');
                             if(!mcheck) {
                                 $("#modelimages").prepend("<img src="+json.result+" class='img-responsive thumbnail' id='mimage'>");
-                            } else {
+                            } else if (tst == false) {
+                            } else if (tst == true) {
                                 mcheck.src=json.result;
                             }
                             self.chosenModelData.removeAll();
                             var timestep = json.images[0];
                             var imgpath = json.images[1];
+                            var num_buttons = {'GFS':[384,6,14,0], 'ECMWF':[240,24,3,2],'CMC':[240,6,11,0],'NAM':[84,3,8,0],'RGEM':[48,3,5,0]};
                             for(var i = 0; i < json.images[0].length; i++) {
-                                self.chosenModelData.push([timestep[i], imgpath[i]])
+                                self.chosenModelData.push([timestep[i], imgpath[i], false]);
+                                //timearr[timestep[i]]=imgpath[i];
+                                
                             }
-                            //console.log(json.images[1].length);
-                            //self.chosenModelData.push(json.images);
+                            var buttonval = [];
+                            for(var a=0; a <= num_buttons[btnval][0]; a+=num_buttons[btnval][1] ) {
+                                if(a <= 240) {
+                                    buttonval.push(a.toString());
+                                } else {
+                                    a +=6;
+                                    buttonval.push(a.toString());
+                                }
+                            }
+                            mlength = self.chosenModelData().length;
+                            var missinglength = buttonval.length - self.chosenModelData().length;
+                            console.log(self.chosenModelData().length);
+                            for(var j=1; j <missinglength; j++) {
+                                console.log(buttonval[mlength+j].toString());
+                                self.chosenModelData.push([buttonval[mlength+j].toString(), 'undefined',
+                                    true]);
+                            }
+                            
                             console.log(self.chosenModelData());
 
+                            //console.log(json.images[1].length);
+                            //self.chosenModelData.push(json.images);
+                            
+                            //console.log(self.chosenModelData());
+                            //console.log(timearr.length);
 
                         },
 
@@ -212,6 +253,7 @@
                                 buttonval.push(a.toString());
                             }
                         }
+                        //console.log(buttonval.length);
                         for(var i = 0; i < num_buttons[btnval][2]; i++) {
                             var tr= tbl.insertRow();
                             for(var j = 0; j < 4; j++ ) {
@@ -224,6 +266,7 @@
                                 btn.className= "btn btn-default";
                                 btn.name = btnval;
                                 btn.value=(buttonval[0])
+                                //btn.setAttribute("disabled","true");
                                 var t = document.createTextNode(buttonval[0]);
                                 buttonval.shift();
                                 btn.appendChild(t);
@@ -232,10 +275,32 @@
                                 }
                             }
                         }   
-                        $('#modelbuttons').prepend(tbl);
-                    };
-                                }
-                ko.applyBindings(new AppViewModel());
+                        //$('#modelbuttons').prepend(tbl);
+
+                    }
+
+                    self.load_image = function(mtimestep) {
+                        var mcheck=document.getElementById('mimage');
+                        mcheck.src=mtimestep[1];
+
+                    }
+
+                    self.update = function modelupdate() {
+                        // Need to check if buttons have reach a certain length
+                        // if so exit loop
+                        var check = document.getElementsByName("models");
+                        for(var z = 0; z < check.length; z++){
+                            if(check[z].disabled) {
+                                self.create_post(check[z].value, false);
+                            }
+                        }
+                    }
+
+                }
+              var appuimodel = new AppViewModel();
+              window.setInterval(appuimodel.update,5000);
+              //ko.applyBindings(new AppViewModel());
+              ko.applyBindings(appuimodel);
             });
 
             
