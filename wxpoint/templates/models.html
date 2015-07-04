@@ -55,15 +55,25 @@
             </div>
             {% csrf_token %}
         </form>
-        <div class="container-fixed" id="grid-container">
+        <div class="row-fluid" id="grid-container">
         <div class="col-xs-8" id="modelimages"></div>
         <div class="col-xs-3" id="modelbuttons">
         <!--    <form action="/load_images/" method="POST" id="mbutton-form">
                 {% csrf_token %}
             </form> -->
-            <ul data-bind="foreach: chosenModelData" id="timesteps">
-                <button class="btn btn-default" data-bind="attr: {disabled: $data[2]}, text: $data[0], click: $parent.load_image"></button>
-            </ul>
+        <!--    <ul data-bind="foreach: chosenModelData" id="timesteps"> -->
+                <table id="mytable">
+                    <tbody id="timesteps">
+                        <!-- ko foreach: dividedChosenModelData -->
+                            <tr>
+                            <!-- ko foreach: $data -->
+                                <td><button class="btn btn-default" data-bind="attr: {disabled: $data[2]}, text: $data[0], click: $root.load_image"></button></td>
+                        <!-- /ko  -->
+                            </tr>
+                        <!-- /ko -->
+                    </tbody>
+                </table>
+        <!--    </ul> -->
         </div>
         </div>
         <div class="btn-toolbar" data-bind="foreach: globalmodels">
@@ -142,6 +152,15 @@
 
                     self.chosenModel = ko.observable();
                     self.chosenModelData = ko.observableArray();
+                    self.dividedChosenModelData = ko.computed(function () {
+                        var size = 4;
+                        var items = self.chosenModelData();
+                        return [].concat.apply([],
+                            ko.utils.arrayMap(items, function(elem, i) {
+                                return i%size ? [] : [items.slice(i,i+size)];
+                            })
+                        );
+                    }, self);
 
                     //$('button[name=models]').click(function (){
                     self.getModel = function(models) {
@@ -182,11 +201,9 @@
                             self.chosenModelData.removeAll();
                             var timestep = json.images[0];
                             var imgpath = json.images[1];
-                            var num_buttons = {'GFS':[384,6,14,0], 'ECMWF':[240,24,3,2],'CMC':[240,6,11,0],'NAM':[84,3,8,0],'RGEM':[48,3,5,0]};
+                            var num_buttons = {'GFS':[384,6], 'ECMWF':[240,24],'CMC':[240,6],'NAM':[84,3],'RGEM':[48,3]};
                             for(var i = 0; i < json.images[0].length; i++) {
                                 self.chosenModelData.push([timestep[i], imgpath[i], false]);
-                                //timearr[timestep[i]]=imgpath[i];
-                                
                             }
                             var buttonval = [];
                             for(var a=0; a <= num_buttons[btnval][0]; a+=num_buttons[btnval][1] ) {
@@ -199,20 +216,23 @@
                             }
                             mlength = self.chosenModelData().length;
                             var missinglength = buttonval.length - self.chosenModelData().length;
-                            console.log(self.chosenModelData().length);
                             for(var j=1; j <missinglength; j++) {
-                                console.log(buttonval[mlength+j].toString());
                                 self.chosenModelData.push([buttonval[mlength+j].toString(), 'undefined',
                                     true]);
                             }
-                            
-                            console.log(self.chosenModelData());
+                            /*
+                            var idx = 1;
+                            var row, next;
+                            var count =0
+                            while((row = $('#mytable tr:nth-child(' + idx++ + ')')).length) {
+                                if((next = $('#mytable tr:nth-child(' + idx + ')')).length) {
+                                    row.append(next.find('td'));
+                                    next.remove();
+                                }   
+                            }
+                            */
 
-                            //console.log(json.images[1].length);
-                            //self.chosenModelData.push(json.images);
-                            
-                            //console.log(self.chosenModelData());
-                            //console.log(timearr.length);
+
 
                         },
 
@@ -225,6 +245,7 @@
 
 
                         });
+                        /*
                         var checkbuttons = document.getElementById('allbuttons');
                         //console.log(checkbuttons);
                         if(checkbuttons) {
@@ -233,8 +254,9 @@
                         } else {
                             self.create_buttons(btnval);
                         }
+                        */
                     }
-
+                    /*
                     self.create_buttons= function(btnval) {
                         var modeldiv = document.getElementById('allbuttons');
                         var num_buttons = {'GFS':[384,6,14,0], 'ECMWF':[240,24,3,2],'CMC':[240,6,11,0],'NAM':[84,3,8,0],'RGEM':[48,3,5,0]};
@@ -278,6 +300,7 @@
                         //$('#modelbuttons').prepend(tbl);
 
                     }
+                    */
 
                     self.load_image = function(mtimestep) {
                         var mcheck=document.getElementById('mimage');
@@ -285,7 +308,7 @@
 
                     }
 
-                    self.update = function modelupdate() {
+                    self.update = function() {
                         // Need to check if buttons have reach a certain length
                         // if so exit loop
                         var check = document.getElementsByName("models");
@@ -298,8 +321,9 @@
 
                 }
               var appuimodel = new AppViewModel();
-              window.setInterval(appuimodel.update,5000);
+              //window.setInterval(appuimodel.update,5000);
               //ko.applyBindings(new AppViewModel());
+              //ko.virtualElements.allowedBindings.appuimodel = true;
               ko.applyBindings(appuimodel);
             });
 
