@@ -10,18 +10,19 @@ def model_page(request):
     if request.method =='POST':
 
         post_data = request.POST.get('initmdls')
-        print(post_data)
         initmodelrun = ModelRun.objects.filter(currmodel__mname=post_data)
-        print(initmodelrun)
-        cmrun = initmodelrun[0].run_name
+        runnames = [x.run_name for x in initmodelrun]
+        runnames = runnames[-4:]
+        print(runnames)
+        if request.POST.get('mruns') == 'latest':
+            cmrun=initmodelrun[0].run_name
+        else: 
+            cmrun = request.POST.get('mruns')
         print(cmrun)
-        """
-        initimage = ModelImages.objects.filter(model_region__region='USA').filter(model_region__model_run__run_name=cmrun).filter(
-            map_type="temps", timestep='00hr')
-        """
+        region = request.POST.get('mregion')
         znitimage = ModelImages.objects.filter(model_region__model_run__currmodel__mname=post_data,
             model_region__model_run__run_name=cmrun,
-            model_region__region='USA',
+            model_region__region=region,
             map_type="temps", timestep='00hr')
         print(znitimage)
         #print(initimage[10].map_path.url)
@@ -46,6 +47,7 @@ def model_page(request):
         response_data = {}
         response_data['result'] = initimage
         response_data['images'] = [timages , aimages]
+        response_data['modelruns'] = runnames
         #print(response_data['images'])
         return HttpResponse(json.dumps(response_data),content_type="application/json")
     else:
